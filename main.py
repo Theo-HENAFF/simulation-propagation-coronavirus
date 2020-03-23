@@ -1,4 +1,5 @@
 import simpy
+import networkx as nx
 
 
 class Person(object):
@@ -52,10 +53,16 @@ env = simpy.Environment()
 person = Person(env)
 
 
-def driver(env, car):
+def driver(env, person):
     yield env.timeout(3)
     person.action.interrupt()
 
 
 env.process(driver(env, person))
 env.run(until=15)  # Run pdt 15
+
+G = nx.Graph()
+G.add_node(0, person=Person(env))
+nx.draw(G, with_labels=True, font_weight='bold')
+
+
