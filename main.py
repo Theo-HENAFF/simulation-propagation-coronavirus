@@ -1,10 +1,14 @@
+import simpy
+
+
 class Person(object):
-    def __init__(self, env, contagious_time, mortality_transmission_rate):
+    def __init__(self, env, contagious_time, mortality_transmission_rate, vaccine_efficiency):
         self.env = env
         self.action = env.process(self.run())
         self.contagious_time = contagious_time
         self.mortality_transmission_rate = mortality_transmission_rate
         self.vaccine_efficiency = vaccine_efficiency
+
 
 def run(self):
     while True:
@@ -22,5 +26,8 @@ def run(self):
         trip_duration = 2
         yield self.env.timeout(trip_duration)
 
+
 def charge(self, duration):
     yield self.env.timeout(duration)
+
+
