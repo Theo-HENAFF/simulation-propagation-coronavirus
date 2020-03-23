@@ -2,7 +2,7 @@ import simpy
 
 
 class Person(object):
-    def __init__(self, env, contagious_time, mortality_transmission_rate, vaccine_efficiency):
+    def __init__(self, env, contagious_time = None, mortality_transmission_rate = None, vaccine_efficiency = None):
         self.env = env
         self.action = env.process(self.run())
 
@@ -10,6 +10,9 @@ class Person(object):
         self.mortality_transmission_rate = mortality_transmission_rate
         self.vaccine_efficiency = vaccine_efficiency
 
+        self.is_contaminated = False
+
+    # Code pas encore vraiment modifie
     def run(self):
         while True:
             print('Start parking and charging at %d' % self.env.now)
@@ -26,12 +29,23 @@ class Person(object):
             trip_duration = 2
             yield self.env.timeout(trip_duration)
 
+    # Code pas encore vraiment modifie
     def charge(self, duration):
         yield self.env.timeout(duration)
 
+    def insert_vaccine(self, vaccine_efficiency):
+        self.vaccine_efficiency = vaccine_efficiency
+
+    def contaminate_neighbours(self, personne):
+        personne.is_contaminated = True
+
+        personne.contagious_time = self.contagious_time
+        personne.mortality_transmission_rate = self.mortality_transmission_rate
+        personne.vaccine_efficiency = self.vaccine_efficiency
+
 
 env = simpy.Environment()
-person = Person(env, None, None, None)
+person = Person(env)
 
 
 def driver(env, car):
@@ -40,4 +54,4 @@ def driver(env, car):
 
 
 env.process(driver(env, person))
-env.run(until=15) #Run pdt 15
+env.run(until=15)  # Run pdt 15
