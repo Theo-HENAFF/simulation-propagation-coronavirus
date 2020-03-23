@@ -21,6 +21,7 @@ class Person(object):
 
         self.id = id
         self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
+        self.cured = False
         self.liste_neighbour = liste_neighbour
 
 nbre_pers = 100
