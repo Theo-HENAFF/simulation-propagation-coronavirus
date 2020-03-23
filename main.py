@@ -12,7 +12,6 @@ class Person(object):
 
         self.is_contaminated = is_contaminated
 
-
     # Code pas encore vraiment modifie
     def run(self):
         while True:
