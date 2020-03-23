@@ -20,7 +20,7 @@ class Person(object):
         self.vaccine_efficiency = vaccine_efficiency  # 0 for no vaccine, 1 for total immunity after vaccination
 
         self.id = id
-        self.health_status = health_status  # healthful/contaminated/dead
+        self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
         self.liste_neighbour = liste_neighbour
 
 nbre_pers = 100
