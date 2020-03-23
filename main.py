@@ -2,7 +2,7 @@ import simpy
 
 
 class Person(object):
-    def __init__(self, env, contagious_time = None, mortality_transmission_rate = None, vaccine_efficiency = None):
+    def __init__(self, env, contagious_time = None, mortality_transmission_rate = None, vaccine_efficiency = None, is_contaminated = False):
         self.env = env
         self.action = env.process(self.run())
 
@@ -10,7 +10,7 @@ class Person(object):
         self.mortality_transmission_rate = mortality_transmission_rate
         self.vaccine_efficiency = vaccine_efficiency
 
-        self.is_contaminated = False
+        self.is_contaminated = is_contaminated
 
     # Code pas encore vraiment modifie
     def run(self):
