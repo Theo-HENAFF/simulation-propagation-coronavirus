@@ -31,7 +31,7 @@ class Person(object):
         self.liste_neighbour = liste_neighbour
 
 nbre_pers = 100
-Xmax = 30  # Nbre max de personnes qu'un individu peut fréquenter
+Xmax = 10  # Nbre max de personnes qu'un individu peut fréquenter
 proba_contamination = 0.90
 liste_pers = []
 
@@ -52,24 +52,22 @@ def initialisation(nbre_pers):
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
     liste_pers[id_conta].health_status = 'contaminated'
-    print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta+1))
+    print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta))
     return liste_pers
 
 def vie(env, person):
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
-    proba_meet = 0.75
-    # print(person.id_person)
+    proba_meet = 0.99
     for id_neighbour in person.liste_neighbour:
-
         if decision(proba_meet):
             print('{} va voir {}'.format(person.id_person, id_neighbour))
             with meeting_point.request() as req:
                 if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
                     if decision(proba_contamination):
                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
-                        liste_pers[id_neighbour-1].health_status = "cont_without_s"
+                        liste_pers[id_neighbour].health_status = "cont_without_s"
                     yield req
-                elif liste_pers[id_neighbour-1].health_status == 'cont_without_s' or liste_pers[id_neighbour-1].health_status == 'contaminated':
+                elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
                     if decision(proba_contamination):
                          print('Terrrrriiiible {} get coroned'.format(person.id_person))
                          person.health_status = "cont_without_s"
