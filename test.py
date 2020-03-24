@@ -38,7 +38,7 @@ liste_pers = []
 
 def initialisation(nbre_pers):
     liste_pers = []
-    for person in range(nbre_pers):
+    for personne in range(nbre_pers):
         # Création des voisins
         nbre_neighbours = r.randint(0, Xmax)  # Nbre aléatoire de voisins jusqu'à Xmax
         liste_neighbour = []
@@ -47,7 +47,7 @@ def initialisation(nbre_pers):
             liste_neighbour.append(n)
 
         # Déclaration des personnes
-        liste_pers.append(Person(env, id_person=person, liste_neighbour=liste_neighbour))
+        liste_pers.append(Person(env, id_person=personne, liste_neighbour=liste_neighbour))
 
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
@@ -72,7 +72,7 @@ env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 liste_pers = initialisation(nbre_pers)
 
-for person in range(len(liste_pers)):
+for person in liste_pers:
     env.process(vie(env, person))
 
 env.run()
