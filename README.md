@@ -11,3 +11,9 @@ Chaque rencontre elle a une probabilité : forte si la personne est saine ou mal
 
 La probabilité de contamination est fixe car c'est la probabilité de rencontre qui est variable\
 La probabilité de contagion est fixé à 25%.
+
+Première simulation : \
+Chaque noeud va voir son voisin avec une probabilité de contamination.
+Une contamination a lieu si la personne ou son voisin est porteur.
+Les noeuds n'effectuent qu'une seule ronde.
+A faire : implémenter une condition d'arret.
