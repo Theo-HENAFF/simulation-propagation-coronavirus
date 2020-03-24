@@ -71,7 +71,7 @@ def vie(env, person):
                     yield req
                 elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
                     if decision(proba_contamination):
-                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                         print('Terrrrriiiible {} get coroned'.format(person.id_person))
                          person.health_status = "cont_without_s"
                     yield req
 
