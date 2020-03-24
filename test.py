@@ -63,10 +63,11 @@ def vie(env, person):
         if decision(proba_meet):
             print('{} va voir {}'.format(person.id_person, id_neighbour))
             with meeting_point.request() as req:
-                if decision(proba_contamination):
-                    print('Terrrrriiiible {} get coroned'.format(id_neighbour))
-                    liste_pers[id_neighbour].health_status = "cont_without_s"
-                yield req
+                if person.health_status == 'cont_without_s' or 'contaminated':
+                    if decision(proba_contamination):
+                        print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                        liste_pers[id_neighbour].health_status = "cont_without_s"
+                    yield req
 
 
 env = simpy.Environment()
