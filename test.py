@@ -60,15 +60,20 @@ def vie(env, person):
     proba_meet = 0.75
     # print(person.id_person)
     for id_neighbour in person.liste_neighbour:
+
         if decision(proba_meet):
             print('{} va voir {}'.format(person.id_person, id_neighbour))
             with meeting_point.request() as req:
-                if person.health_status == 'cont_without_s' or 'contaminated':
+                if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
                     if decision(proba_contamination):
                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
                         liste_pers[id_neighbour].health_status = "cont_without_s"
                     yield req
-
+                elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
+                    if decision(proba_contamination):
+                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                         person.health_status = "cont_without_s"
+                    yield req
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
