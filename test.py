@@ -58,13 +58,14 @@ def initialisation(nbre_pers):
 def vie(env, person):
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
     proba_meet = 0.75
-    for neighbour in person.liste_neighbour:
+    # print(person.id_person)
+    for id_neighbour in person.liste_neighbour:
         if decision(proba_meet):
-            print('{} va voir {}'.format(person.id_person, neighbour.id_person))
+            print('{} va voir {}'.format(person.id_person, id_neighbour))
             with meeting_point.request() as req:
                 if decision(proba_contamination):
-                    print('Terrrrriiiible {} get coroned'.format(neighbour.id_person))
-                    neighbour.health_status = "cont_without_s"
+                    print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                    liste_pers[id_neighbour].health_status = "cont_without_s"
                 yield req
 
 
@@ -72,9 +73,9 @@ env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 liste_pers = initialisation(nbre_pers)
 
-print(liste_pers)
+# print(liste_pers)
 for person in liste_pers:
-    print(person)
+    # print(person.id_person)
     env.process(vie(env, person))
 
 env.run()
