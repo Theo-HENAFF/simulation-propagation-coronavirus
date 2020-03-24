@@ -47,7 +47,7 @@ def initialisation(nbre_pers):
             liste_neighbour.append(n)
 
         # Déclaration des personnes
-        liste_pers.append(Person(env, id_person=personne, liste_neighbour=liste_neighbour))
+        liste_pers.append(Person(env=env, id_person=personne, liste_neighbour=liste_neighbour))
 
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
@@ -72,7 +72,9 @@ env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 liste_pers = initialisation(nbre_pers)
 
+print(liste_pers)
 for person in liste_pers:
+    print(person)
     env.process(vie(env, person))
 
 env.run()
