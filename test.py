@@ -43,7 +43,7 @@ def initialisation(nbre_pers):
         nbre_neighbours = r.randint(0, Xmax)  # Nbre aléatoire de voisins jusqu'à Xmax
         liste_neighbour = []
         for voisin in range(0, nbre_neighbours):
-            n = r.randint(1, nbre_pers)
+            n = r.randint(0, nbre_pers-1)
             liste_neighbour.append(n)
 
         # Déclaration des personnes
