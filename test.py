@@ -52,7 +52,7 @@ def initialisation(nbre_pers):
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
     liste_pers[id_conta].health_status = 'contaminated'
-    print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta))
+    print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta+1))
     return liste_pers
 
 def vie(env, person):
@@ -67,11 +67,11 @@ def vie(env, person):
                 if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
                     if decision(proba_contamination):
                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
-                        liste_pers[id_neighbour].health_status = "cont_without_s"
+                        liste_pers[id_neighbour-1].health_status = "cont_without_s"
                     yield req
-                elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
+                elif liste_pers[id_neighbour-1].health_status == 'cont_without_s' or liste_pers[id_neighbour-1].health_status == 'contaminated':
                     if decision(proba_contamination):
-                         print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                         print('Terrrrriiiible {} get coroned'.format(person.id_person))
                          person.health_status = "cont_without_s"
                     yield req
 
