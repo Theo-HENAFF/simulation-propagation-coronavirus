@@ -12,8 +12,8 @@ class Person(object):
                  health_status='healthful',
                  liste_neighbour = []):
 
-        self.env = env
-        self.action = env.process(self.run())
+        # self.env = env
+        # self.action = env.process(self.run())
 
         self.contagious_time = contagious_time
         self.mortality_transmission_rate = mortality_transmission_rate
@@ -54,20 +54,22 @@ def vie(env, name, person, driving_time, charge_duration):
     yield env.timeout(driving_time)
 
     # Request one of its charging spots
-    print('%s arriving at %d' % (name, env.now))
+    print('{} arriving at {}'.format(name, env.now))
     with bcs.request() as req:
         yield req
 
         # Charge the battery
-    print('%s starting to charge at %s' % (name, env.now))
+    print('{} starting to charge at {}'.format(name, env.now))
     yield env.timeout(charge_duration)
-    print('%s leaving the bcs at %s' % (name, env.now))
+    print('{} leaving the bcs at {}'.format(name, env.now))
 
 
 env = simpy.Environment()
-bcs = simpy.Resource(env, capacity=2)
+bcs = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 
-for i in range(4):
-    env.process(vie(env, 'Car {}'.format(i), bcs, i * 2, 5))
-
+for person in range(len(liste_pers)):
+    env.process(vie(env, 'Car {}'.format(person), bcs, person * 2, 5))
 env.run()
+
+
+initialisation(nbre_pers)
