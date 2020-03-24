@@ -54,7 +54,7 @@ def initialisation(nbre_pers):
     print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta))
 
 
-def vie(env):
+def vie(env, person):
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
     proba_meet = 0.75
     for neighbour in person.liste_neighbour:
@@ -69,11 +69,11 @@ def vie(env):
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
-Vie = vie(env)
+initialisation(nbre_pers)
 
 for person in range(len(liste_pers)):
-    env.process(vie(env, 'Car {}'.format(person), meeting_point, person * 2, 5))
+    env.process(vie(env, 'personne {}'.format(person)))
+
 env.run()
 
 
-initialisation(nbre_pers)
