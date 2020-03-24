@@ -37,6 +37,7 @@ liste_pers = []
 
 
 def initialisation(nbre_pers):
+    liste_pers = []
     for person in range(nbre_pers):
         # Création des voisins
         nbre_neighbours = r.randint(0, Xmax)  # Nbre aléatoire de voisins jusqu'à Xmax
@@ -52,7 +53,7 @@ def initialisation(nbre_pers):
     id_conta = r.randint(0, nbre_pers)
     liste_pers[id_conta].health_status = 'contaminated'
     print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta))
-
+    return liste_pers
 
 def vie(env, person):
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
@@ -69,10 +70,10 @@ def vie(env, person):
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
-initialisation(nbre_pers)
+liste_pers = initialisation(nbre_pers)
 
 for person in range(len(liste_pers)):
-    env.process(vie(env, 'personne {}'.format(person)))
+    env.process(vie(env, person))
 
 env.run()
 
