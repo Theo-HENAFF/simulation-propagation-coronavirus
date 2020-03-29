@@ -2,7 +2,6 @@
 
 import simpy
 import random as r
-
 def decision(probability):
     if r.random() < probability:
         return True
@@ -12,7 +11,7 @@ def decision(probability):
 class Person(object):
     def __init__(self, env,
                  id_person,
-                 contagious_time=None,
+                 contagious_time=0,
                  mortality_transmission_rate=None,
                  vaccine_efficiency=None,
                  health_status='healthful',
@@ -61,17 +60,17 @@ def vie(env, person):
     for id_neighbour in person.liste_neighbour:
         if decision(proba_meet):
             print('{} va voir {}'.format(person.id_person, id_neighbour))
-            with meeting_point.request() as req:
-                if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
-                    if decision(proba_contamination):
-                        print('Terrrrriiiible {} get coroned'.format(id_neighbour))
-                        liste_pers[id_neighbour].health_status = "cont_without_s"
-                    yield req
-                elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
-                    if decision(proba_contamination):
-                         print('Terrrrriiiible {} get coroned'.format(person.id_person))
-                         person.health_status = "cont_without_s"
-                    yield req
+            if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
+                if decision(proba_contamination):
+                    print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                    liste_pers[id_neighbour].health_status = "cont_without_s"
+
+            elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
+                if decision(proba_contamination):
+                     print('Terrrrriiiible {} get coroned'.format(person.id_person))
+                     person.health_status = "cont_without_s"
+            yield env.timeout(1)
+
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
