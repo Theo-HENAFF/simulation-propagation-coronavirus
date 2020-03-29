@@ -17,3 +17,10 @@ Chaque noeud va voir son voisin avec une probabilité de contamination.
 Une contamination a lieu si la personne ou son voisin est porteur.
 Les noeuds n'effectuent qu'une seule ronde.
 A faire : implémenter une condition d'arret.
+
+A faire : 
+- Proba_meet si personne contaminated 
+- Implémenter system de vaccin
+- Implémenter la visualisation
+- Si cured alors immunisée
+- Améliorer la temporalité ( env.timeout)

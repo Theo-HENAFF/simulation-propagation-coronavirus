@@ -29,11 +29,14 @@ class Person(object):
         self.cured = False
         self.liste_neighbour = liste_neighbour
 
-nbre_pers = 100
-Xmax = 10  # Nbre max de personnes qu'un individu peut fréquenter
+nbre_pers = 150
+Xmax = 3  # Nbre max de personnes qu'un individu peut fréquenter
 proba_contamination = 0.90
 liste_pers = []
-
+liste_dead = []
+proba_guerison = 0.0002
+proba_meet = 0.99
+nbre_jour = 11
 
 def initialisation(nbre_pers):
     liste_pers = []
@@ -50,37 +53,67 @@ def initialisation(nbre_pers):
 
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
-    liste_pers[id_conta].health_status = 'contaminated'
+    liste_pers[id_conta].health_status = 'cont_without_s'
     print('la personne {} doit arreter de manger de la soupe de chauve souris'.format(id_conta))
+    f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
     return liste_pers
 
-def vie(env, person):
+def vie(env, liste_pers,nbre_jour):
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
-    proba_meet = 0.99
-    for id_neighbour in person.liste_neighbour:
-        if decision(proba_meet):
-            print('{} va voir {}'.format(person.id_person, id_neighbour))
-            if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
-                if decision(proba_contamination):
-                    print('Terrrrriiiible {} get coroned'.format(id_neighbour))
-                    liste_pers[id_neighbour].health_status = "cont_without_s"
+    for journee in range(nbre_jour) :
+        for person in liste_pers:
+            for id_neighbour in person.liste_neighbour:
+                if decision(proba_meet) and liste_pers[id_neighbour].health_status != 'dead' :
+                    print('{} va voir {}'.format(person.id_person, id_neighbour))
+                    f.write('{} va voir {} \n'.format(person.id_person, id_neighbour))
+                    # with meeting_point.request() as req:
+                    if (person.health_status == 'cont_without_s' or person.health_status == 'contaminated') and liste_pers[id_neighbour].health_status == 'healthful':
+                        if decision(proba_contamination):
+                            print('Terrrrriiiible {} get coroned'.format(id_neighbour))
+                            f.write('Terrrrriiiible {} get coroned \n'.format(id_neighbour))
+                            liste_pers[id_neighbour].health_status = "cont_without_s"
+                        #yield req
+                    elif (liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated') and person.health_status == 'healthful':
+                        if decision(proba_contamination):
+                            print('Terrrrriiiible {} get coroned'.format(person.id_person))
+                            f.write('Terrrrriiiible {} get coroned \n'.format(person.id_person))
+                            person.health_status = "cont_without_s"
 
-            elif liste_pers[id_neighbour].health_status == 'cont_without_s' or liste_pers[id_neighbour].health_status == 'contaminated':
-                if decision(proba_contamination):
-                     print('Terrrrriiiible {} get coroned'.format(person.id_person))
-                     person.health_status = "cont_without_s"
-            yield env.timeout(1)
+                        #yield req
+            if person.health_status == 'cont_without_s' or person.health_status == 'contaminated':
+                person.contagious_time += 1
+                if person.contagious_time > 3 and person.health_status == 'cont_without_s':
+                    person.health_status = 'contaminated'
+                    print('MINCE {} développe des symptomes'.format(person.id_person))
+                    f.write('MINCE {} développe des symptomes \n'.format(person.id_person))
+                elif person.contagious_time > 5 and person.health_status == "contaminated" :
+                    if decision(proba_guerison) :
+                        person.health_status = 'cured'
+                        print('YOUPI {} a guéri'.format(person.id_person))
+                        f.write('YOUPI {} a guéri \n'.format(person.id_person))
+                if person.contagious_time > 7 and person.health_status == 'contaminated':
+                    person.health_status = 'dead'
+                    print('CHEH {} à claqué'.format(person.id_person))
+                    f.write('CHEH {} à claqué \n'.format(person.id_person))
+
+        print("\n Trop bien fin de la journée {} \n".format(journee +1))
+        f.write("\n Trop bien fin de la journée {} \n".format(journee +1 ))
+        yield env.timeout(1)
+
+
+
+
 
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
+f = open("result.txt", "a")
 liste_pers = initialisation(nbre_pers)
 
-# print(liste_pers)
-for person in liste_pers:
-    # print(person.id_person)
-    env.process(vie(env, person))
+
+env.process(vie(env, liste_pers,nbre_jour))
 
 env.run()
+f.close()
 
 
