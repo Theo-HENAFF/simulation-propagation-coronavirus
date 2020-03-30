@@ -5,7 +5,9 @@ import simpy
 import numpy as np
 import matplotlib.pyplot as plt
 
-nbre_pers = 100000
+nombre_pers = 100000
+nombre_jour = 60
+
 Xmax = 5  # Nbre max de personnes qu'un individu peut fréquenter
 proba_contamination = 0.4
 liste_pers = []
@@ -14,7 +16,6 @@ proba_guerison = 0.3
 proba_meet = 0.5
 proba_mort = 0.05
 malus_conta = 8  # Malus si personne conta divise la proba de meeting
-nbre_jour = 60
 time_without_s = 5
 time_contaminated = 14
 time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
@@ -174,14 +175,18 @@ def vie(env, liste_pers, nbre_jour):
         yield env.timeout(1)
 
 
+# ===================================================================================================
+# Lancement de la simulation
+# ===================================================================================================
+
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 
 f = open("result.txt", "r+")
 f.truncate(0)
 
-liste_pers = initialisation(nbre_pers)
-env.process(vie(env, liste_pers, nbre_jour))
+liste_pers = initialisation(nombre_pers)
+env.process(vie(env, liste_pers, nombre_jour))
 env.run()
 
 f.close()
@@ -191,12 +196,12 @@ f.close()
 # ===================================================================================================
 
 # print(stats)
-x = np.linspace(0, nbre_jour, nbre_jour+1)
+x = np.linspace(0, nombre_jour, nombre_jour+1)
 labels = ["cont_without_s ", "contaminated", "dead", "cured"]
 pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60"]
 
 fig, ax = plt.subplots()
 ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], colors=pal ,alpha=0.9 ,labels=labels)
 ax.legend(loc='upper left')
-plt.hlines(nbre_pers, 0, nbre_jour)
+plt.hlines(nombre_pers, 0, nombre_jour)
 plt.show()
