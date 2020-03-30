@@ -19,7 +19,7 @@ Les noeuds n'effectuent qu'une seule ronde.
 A faire : implémenter une condition d'arret.
 
 A faire : 
-- Proba_meet si personne contaminated 
+- Proba_meet si personne contaminated CHECK
 - Implémenter system de vaccin
 - Implémenter la visualisation
 - Si cured alors immunisée
