@@ -6,14 +6,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 nbre_pers = 100
-Xmax = 3  # Nbre max de personnes qu'un individu peut fréquenter
-proba_contamination = 0.90
+Xmax = 5  # Nbre max de personnes qu'un individu peut fréquenter
+proba_contamination = 0.35
 liste_pers = []
 liste_dead = []
 proba_guerison = 0.5
-proba_meet = 0.8
-malus_conta = 2  # Malus si personne conta divise la proba de meeting
-nbre_jour = 10
+proba_meet = 0.3
+proba_mort = 0.006
+malus_conta = 8  # Malus si personne conta divise la proba de meeting
+nbre_jour = 50
 stats = {"healthful": [nbre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
 
 
@@ -61,7 +62,7 @@ def initialisation(nbre_pers):
     # random conta 1 pers
     id_conta = r.randint(0, nbre_pers)
     liste_pers[id_conta].health_status = 'cont_without_s'
-    f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
+    # f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
     return liste_pers
 
 
@@ -69,20 +70,20 @@ def initialisation(nbre_pers):
 # Fonction pour simuler un meeting
 # ===================================================================================================
 def meeting(person, id_neighbour):
-    f.write("{} va voir {} \n".format(person.id_person, id_neighbour))
+    # f.write("{} va voir {} \n".format(person.id_person, id_neighbour))
     # with meeting_point.request() as req:
 
     # Si une des personnes qui se rendnent visite est contaminée (avec ou sans symptômes) il y'a une proba de contamination
     if (person.health_status == "cont_without_s" or person.health_status == "contaminated") and \
             liste_pers[id_neighbour].health_status == "healthful":
         if decision(proba_contamination):
-            f.write("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
+            # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
             liste_pers[id_neighbour].health_status = "cont_without_s"
         # yield req
     elif (liste_pers[id_neighbour].health_status == "cont_without_s" or liste_pers[
         id_neighbour].health_status == "contaminated") and person.health_status == "healthful":
         if decision(proba_contamination):
-            f.write("TERRRRRRIIIIBLE {} get coroned \n".format(person.id_person))
+            # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(person.id_person))
             person.health_status = "cont_without_s"
         # yield req
 
@@ -92,20 +93,20 @@ def gestion(person):
         person.contagious_time += 1
 
     # A bout de X unités de temps elle commence à développer des symptômes
-    if person.contagious_time > 3 and person.health_status == "cont_without_s":
+    if person.contagious_time > 4 and person.health_status == "cont_without_s":
         person.health_status = "contaminated"
-        f.write("MINCE {} développe des symptomes \n".format(person.id_person))
+        # f.write("MINCE {} développe des symptomes \n".format(person.id_person))
 
     # A bout de X temps la personne contaminée est gueri avec une proba de guerison
-    elif person.contagious_time > 5 and person.health_status == "contaminated":
+    elif person.contagious_time > 21 and person.health_status == "contaminated":
         if decision(proba_guerison):
             person.health_status = "cured"
-            f.write("YOUPI {} a guéri \n".format(person.id_person))
+            # f.write("YOUPI {} a guéri \n".format(person.id_person))
 
     # Si apres X temps elle n'est pas guéri la personn meurt
-    if person.contagious_time > 7 and person.health_status == "contaminated":
+    elif person.contagious_time > 11 and decision(proba_mort) and person.health_status == "contaminated":
         person.health_status = 'dead'
-        f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.id_person))
+        # f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.id_person))
 
 def add_stats():
     count_healthful = 0
@@ -145,7 +146,8 @@ def vie(env, liste_pers, nbre_jour):
                 for id_neighbour in person.liste_neighbour:
                     # La personne va voir dans ses voisins qui n'est pas mort et lui rend visite
                     if liste_pers[id_neighbour].health_status == "dead":
-                        f.write("IL a sonné mais PERSONNE a rep \n")
+                        # f.write("IL a sonné mais PERSONNE a rep \n")
+                        pass
                     # Si aucun des 2 n'a de symptomes, le meeting reste normal
                     elif (liste_pers[id_neighbour].health_status != "contaminated" or person.health_status != "contaminated") and decision(proba_meet):
                         meeting(person, id_neighbour)
@@ -153,11 +155,12 @@ def vie(env, liste_pers, nbre_jour):
                     elif (liste_pers[id_neighbour].health_status == "contaminated" or person.health_status == "contaminated") and decision(proba_meet/malus_conta):
                         meeting(person, id_neighbour)
                     else:
-                        f.write("pas de rencontre NON NON NON \n")
+                        # f.write("pas de rencontre NON NON NON \n")
+                        pass
 
             # Partie gestion de temporalité. Chaque personne à un compteur de temps de contamination.
             gestion(person)
-        f.write("\n Trop bien fin de la journée {} \n".format(journee + 1))
+        # f.write("\n Trop bien fin de la journée {} \n".format(journee + 1))
         add_stats()
         yield env.timeout(1)
 
@@ -177,9 +180,10 @@ f.close()
 print(stats)
 x = np.linspace(0, nbre_jour, nbre_jour+1)
 labels = ["cont_without_s ", "contaminated", "dead", "cured"]
+pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60"]
 
 fig, ax = plt.subplots()
-ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], labels=labels)
+ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], colors=pal ,alpha=0.9 ,labels=labels)
 ax.legend(loc='upper left')
 plt.hlines(nbre_pers, 0, nbre_jour)
 plt.show()
