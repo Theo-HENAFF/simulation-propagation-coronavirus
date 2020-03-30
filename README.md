@@ -24,3 +24,4 @@ A faire :
 - Implémenter la visualisation
 - Si cured alors immunisée
 - Améliorer la temporalité ( env.timeout)
+- Ficher de config
