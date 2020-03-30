@@ -5,16 +5,19 @@ import simpy
 import numpy as np
 import matplotlib.pyplot as plt
 
-nbre_pers = 100
+nbre_pers = 100000
 Xmax = 5  # Nbre max de personnes qu'un individu peut fréquenter
-proba_contamination = 0.35
+proba_contamination = 0.4
 liste_pers = []
 liste_dead = []
-proba_guerison = 0.5
-proba_meet = 0.3
-proba_mort = 0.006
+proba_guerison = 0.3
+proba_meet = 0.5
+proba_mort = 0.05
 malus_conta = 8  # Malus si personne conta divise la proba de meeting
-nbre_jour = 50
+nbre_jour = 60
+time_without_s = 5
+time_contaminated = 14
+time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
 stats = {"healthful": [nbre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
 
 
@@ -35,7 +38,6 @@ class Person(object):
 
         self.id_person = id_person
         self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
-        self.cured = False
         self.liste_neighbour = liste_neighbour
 
 
@@ -93,20 +95,25 @@ def gestion(person):
         person.contagious_time += 1
 
     # A bout de X unités de temps elle commence à développer des symptômes
-    if person.contagious_time > 4 and person.health_status == "cont_without_s":
-        person.health_status = "contaminated"
+    if person.contagious_time > time_without_s and person.health_status == "cont_without_s":
+        # pour simuler si la personne meurt rapidement
+        if decision(proba_mort):
+            person.health_status = "dead"
+        else:
+            person.health_status = "contaminated"
         # f.write("MINCE {} développe des symptomes \n".format(person.id_person))
 
     # A bout de X temps la personne contaminée est gueri avec une proba de guerison
-    elif person.contagious_time > 21 and person.health_status == "contaminated":
+    elif person.contagious_time > time_contaminated and person.health_status == "contaminated":
         if decision(proba_guerison):
             person.health_status = "cured"
             # f.write("YOUPI {} a guéri \n".format(person.id_person))
 
-    # Si apres X temps elle n'est pas guéri la personn meurt
-    elif person.contagious_time > 11 and decision(proba_mort) and person.health_status == "contaminated":
+    # Si apres X temps elle n'est pas guéri elle a de grande chance de mourir
+    elif person.contagious_time > time_too_much and decision(proba_mort) and person.health_status == "contaminated":
         person.health_status = 'dead'
         # f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.id_person))
+
 
 def add_stats():
     count_healthful = 0
@@ -132,6 +139,8 @@ def add_stats():
     stats["contaminated"].append(count_contaminated)
     stats["cured"].append(count_cured)
     stats["dead"].append(count_dead)
+
+
 # ===================================================================================================
 # Fonction globale d'une journee
 # ===================================================================================================
@@ -164,6 +173,7 @@ def vie(env, liste_pers, nbre_jour):
         add_stats()
         yield env.timeout(1)
 
+
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
 
@@ -176,8 +186,11 @@ env.run()
 
 f.close()
 
+# ===================================================================================================
 # Affichage des stats
-print(stats)
+# ===================================================================================================
+
+# print(stats)
 x = np.linspace(0, nbre_jour, nbre_jour+1)
 labels = ["cont_without_s ", "contaminated", "dead", "cured"]
 pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60"]
