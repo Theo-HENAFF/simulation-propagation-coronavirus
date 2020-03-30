@@ -2,7 +2,8 @@
 
 import random as r
 import simpy
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 nbre_pers = 100
 Xmax = 3  # Nbre max de personnes qu'un individu peut fréquenter
@@ -13,6 +14,7 @@ proba_guerison = 0.5
 proba_meet = 0.8
 malus_conta = 2  # Malus si personne conta divise la proba de meeting
 nbre_jour = 10
+stats = {"healthful": [nbre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
 
 
 class Person(object):
@@ -21,7 +23,7 @@ class Person(object):
                  contagious_time=0,
                  mortality_transmission_rate=None,
                  vaccine_efficiency=None,
-                 health_status='healthful',
+                 health_status="healthful",
                  liste_neighbour=[]):
         # self.env = env
         # self.action = env.process(self.run())
@@ -105,11 +107,35 @@ def gestion(person):
         person.health_status = 'dead'
         f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.id_person))
 
+def add_stats():
+    count_healthful = 0
+    count_cont_without_s = 0
+    count_contaminated = 0
+    count_cured = 0
+    count_dead = 0
 
+    for person in liste_pers:
+        if person.health_status == "healthful":
+            count_healthful += 1
+        elif person.health_status == "cont_without_s":
+            count_cont_without_s += 1
+        elif person.health_status == "contaminated":
+            count_contaminated += 1
+        elif person.health_status == "cured":
+            count_cured += 1
+        elif person.health_status == "dead":
+            count_dead += 1
+
+    stats["healthful"].append(count_healthful)
+    stats["cont_without_s"].append(count_cont_without_s)
+    stats["contaminated"].append(count_contaminated)
+    stats["cured"].append(count_cured)
+    stats["dead"].append(count_dead)
 # ===================================================================================================
 # Fonction globale d'une journee
 # ===================================================================================================
 def vie(env, liste_pers, nbre_jour):
+
     # Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail)
     # Gestion rencontre et contagion
     for journee in range(nbre_jour):
@@ -132,17 +158,28 @@ def vie(env, liste_pers, nbre_jour):
             # Partie gestion de temporalité. Chaque personne à un compteur de temps de contamination.
             gestion(person)
         f.write("\n Trop bien fin de la journée {} \n".format(journee + 1))
+        add_stats()
         yield env.timeout(1)
-
 
 env = simpy.Environment()
 meeting_point = simpy.Resource(env, capacity=2)  # Seulement 2 personnes peuvent se rencontrer
+
 f = open("result.txt", "r+")
 f.truncate(0)
+
 liste_pers = initialisation(nbre_pers)
-
 env.process(vie(env, liste_pers, nbre_jour))
-
 env.run()
 
 f.close()
+
+# Affichage des stats
+print(stats)
+x = np.linspace(0, nbre_jour, nbre_jour+1)
+labels = ["cont_without_s ", "contaminated", "dead", "cured"]
+
+fig, ax = plt.subplots()
+ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], labels=labels)
+ax.legend(loc='upper left')
+plt.hlines(nbre_pers, 0, nbre_jour)
+plt.show()
