@@ -120,13 +120,14 @@ def vie(env, liste_pers, nbre_jour):
                     # La personne va voir dans ses voisins qui n'est pas mort et lui rend visite
                     if liste_pers[id_neighbour].health_status == "dead":
                         f.write("IL a sonné mais PERSONNE a rep \n")
-                    elif liste_pers[id_neighbour].health_status != "contaminated" and decision(proba_meet):
+                    # Si aucun des 2 n'a de symptomes, le meeting reste normal
+                    elif (liste_pers[id_neighbour].health_status != "contaminated" or person.health_status != "contaminated") and decision(proba_meet):
                         meeting(person, id_neighbour)
-                    elif liste_pers[id_neighbour].health_status == "contaminated" and decision(proba_meet/malus_conta):
+                    # Si une des 2 a des symptomes, la proba de rencontre est grandement diminué
+                    elif (liste_pers[id_neighbour].health_status == "contaminated" or person.health_status == "contaminated") and decision(proba_meet/malus_conta):
                         meeting(person, id_neighbour)
-                    else :
+                    else:
                         f.write("pas de rencontre NON NON NON \n")
-
 
             # Partie gestion de temporalité. Chaque personne à un compteur de temps de contamination.
             gestion(person)
