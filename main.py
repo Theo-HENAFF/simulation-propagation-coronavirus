@@ -17,7 +17,7 @@ proba_mort = 0.05
 malus_conta = 8  # Malus si personne conta divise la proba de meeting
 time_without_s = 5
 time_contaminated = 14
-time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
+time_too_much = 40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
 stats = {"healthful": [nombre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
 
 
@@ -29,8 +29,6 @@ class Person(object):
                  vaccine_efficiency=None,
                  health_status="healthful",
                  liste_neighbour=[]):
-        # self.env = env
-        # self.action = env.process(self.run())
 
         self.contagious_time = contagious_time
         self.mortality_transmission_rate = mortality_transmission_rate
