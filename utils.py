@@ -28,9 +28,10 @@ def number_infected():
 
 
 class Person(object):
-    def __init__(self, idd, health_status="healthful"):
+    def __init__(self, idd, health_status="healthful", liste_neighbour=[]):
         self.idd = idd
         self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
+        self.liste_neighbour = liste_neighbour
 
     # def infected(self, id, p):
     #     if self.status == "sick" and listperson[id].status != "sick" :
@@ -104,7 +105,7 @@ def meet(env, name, cw, idd, num_person, timemeet,p):
         print('%s exit the meeting zone %.2f.' % (name, env.now))
 
 
-def setup(env, area_zone, meetime, num_person, num_tips, p):
+def setup(env, area_zone, meetime, nber_person, num_tips, p):
     """
     init the simulation
     """
@@ -114,14 +115,25 @@ def setup(env, area_zone, meetime, num_person, num_tips, p):
     # Create n person person in your world
     # patient zero ( infected )
 
-    listperson.append(Person(0,"sick"))
-    for i in range(1,num_person):
-        listperson.append(Person(i))
+    for person in range(nber_person):
+        # Création des voisins
+        nbre_neighbours = r.randint(0, Xmax)  # Nbre aléatoire de voisins jusqu'à Xmax
+        liste_neighbour = []
+        for voisin in range(0, nbre_neighbours):
+            n = r.randint(0, nber_person - 1)
+            liste_neighbour.append(n)
+        # Déclaration des personnes
+        liste_pers.append(Person(id_person=person, liste_neighbour=liste_neighbour))
+
+    # random conta 1 pers
+    id_conta = r.randint(0, nbre_pers)
+    liste_pers[id_conta].health_status = 'cont_without_s'
+    # f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
 
     # start the meet between person
     for i in range(num_tips):
-        rand = r.randint(0,num_person)
-        env.process(meet(env, 'Person %d' % rand, world,rand,num_person,meetime,p))
+        rand = r.randint(0, nbre_pers)
+        env.process(meet(env, 'Person %d' % rand, world, rand, nbre_pers, meetime, p))
     yield env.timeout(r.randint(500 - 2, 500 + 2))
 
 
@@ -134,7 +146,6 @@ def initialisation(nbre_pers):
         for voisin in range(0, nbre_neighbours):
             n = r.randint(0, nbre_pers - 1)
             liste_neighbour.append(n)
-
         # Déclaration des personnes
         liste_pers.append(Person(id_person=personne, liste_neighbour=liste_neighbour))
 
