@@ -3,8 +3,6 @@ import random as r
 import simpy
 
 # listperson in your simulation
-global listperson
-listperson = []
 global liste_pers
 liste_pers = []
 
@@ -47,19 +45,19 @@ class World(object):
         self.meet = simpy.Resource(env, area_zone)
         self.meetime = meetime
 
-    def area(self, idd, num_person, timemeet, p):
+    def area(self, idd, num_person, timemeet, proba_conta):
         """
         propagation's area
         in this area , one person can meet an other person
         """
-        id_neighbour = r.randint(0, len(Person.liste_neighbour))
+        id_neighbour = r.randint(0, len(liste_pers[idd].liste_neighbour))
         print("Person {} : Enter the meeting zone {}".format(id_neighbour, self.env.now))
-        listperson[idd].infection(id_neighbour, p)
+        liste_pers[idd].infection(id_neighbour, proba_conta)
         yield self.env.timeout(timemeet)
         print("Person {} : Enter the meeting zone {}".format(id_neighbour, self.env.now))
 
 
-def meet(env, name, cw, idd, num_person, timemeet, p):
+def meet(env, name, cw, idd, num_person, timemeet, proba_conta):
     """
     create meet between person (in the area)
     """
@@ -68,7 +66,7 @@ def meet(env, name, cw, idd, num_person, timemeet, p):
         yield request
         # meeting zone
         print("{} : Enter in the meeting zone {}".format(name, env.now))
-        yield env.process(cw.area(idd, num_person, timemeet, ))
+        yield env.process(cw.area(idd, num_person, timemeet, proba_conta))
         # exit the meeting
         print('%s exit the meeting zone %.2f.' % (name, env.now))
 
@@ -86,7 +84,7 @@ def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, p
             n = r.randint(0, nber_person - 1)
             liste_neighbour.append(n)
         # Déclaration des personnes
-        liste_pers.append(Person(id_person=person, liste_neighbour=liste_neighbour))
+        liste_pers.append(Person(idd=person, liste_neighbour=liste_neighbour))
 
     # random conta 1 pers
     id_conta = r.randint(0, nber_person)
@@ -96,6 +94,6 @@ def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, p
     # start the meet between person
     for i in range(capacity_area):
         rand = r.randint(0, nber_person)
-        env.process(meet(env, 'Person %d' % rand, world, rand, nber_person, meetime, p))
+        env.process(meet(env, 'Person %d' % rand, world, rand, nber_person, meetime, proba_conta))
     yield env.timeout(r.randint(500 - 2, 500 + 2))
 
