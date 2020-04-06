@@ -84,7 +84,7 @@ class World(object):
         propagation's area
         in this area , one person can meet an other person
         """
-        id_neighbour = r.randint(0, num_person)
+        id_neighbour = r.randint(0, len(Person.liste_neighbour))
         print("Person {} : Enter the meeting zone {}".format(id_neighbour, self.env.now))
         listperson[idd].infection(id_neighbour, p)
         yield self.env.timeout(timemeet)
