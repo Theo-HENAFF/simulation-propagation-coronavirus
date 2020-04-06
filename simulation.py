@@ -34,9 +34,10 @@ if __name__ == "__main__":
     TIMEMEET = cfg['config']['TIMEMEET']
     NUM_PERSON = cfg['config']['NUM_PERSON']
     NUM_CYCLE_OUTPUT = cfg['config']['NUM_CYCLE_OUTPUT']
-    NUM_TIPS = cfg['config']['NUM_TIPS']
+    CAPACITY_AREA = cfg['config']['CAPACITY_AREA']
     SIM_TIME = cfg['config']['SIM_TIME']
-    p = cfg['config']['P']
+    proba_conta = cfg['config']['PROBA_CONTAMINATION']
+    MAX_NEIGHBOURS = cfg['config']['MAX_NEIGHBOURS']
     # This helps reproducing the results
     random.seed(RANDOM_SEED)
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         env = simpy.Environment()
 
         # Setup and start the simulation
-        env.process(utils.setup(env, NUM_AREA, TIMEMEET,NUM_PERSON,NUM_TIPS,p))
+        env.process(utils.setup(env=env, area_zone=NUM_AREA, meetime=TIMEMEET, nber_person=NUM_PERSON, capacity_area=CAPACITY_AREA, max_neighbours=MAX_NEIGHBOURS, proba_conta=proba_conta))
 
         # Execute!
         env.run(until=SIM_TIME)

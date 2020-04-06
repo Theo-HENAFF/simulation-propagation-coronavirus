@@ -11,12 +11,12 @@ config:
 
 
 
-  liste_dead = []
-  proba_guerison = 0.3
-  proba_meet = 0.5
-  proba_mort = 0.05
-  malus_conta = 8  # Malus si personne conta divise la proba de meeting
-  time_without_s = 5
-  time_contaminated = 14
-  time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
-  stats = {"healthful": [nombre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
+#  liste_dead = []
+#  proba_guerison = 0.3
+#  proba_meet = 0.5
+#  proba_mort = 0.05
+#  malus_conta = 8  # Malus si personne conta divise la proba de meeting
+#  time_without_s = 5
+#  time_contaminated = 14
+#  time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
+#  stats = {"healthful": [nombre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}

@@ -73,7 +73,7 @@ def meet(env, name, cw, idd, num_person, timemeet, p):
         print('%s exit the meeting zone %.2f.' % (name, env.now))
 
 
-def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, p):
+def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, proba_conta):
 
     # Create the World
     world = World(env, area_zone, meetime)
