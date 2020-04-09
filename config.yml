@@ -5,18 +5,16 @@ config:
   SIM_TIME : 200                     # Simulation time in minutes (in on cycle)
   NUM_PERSON : 100                   # number of person in the simulation
   CAPACITY_AREA : 15                 # number of object (person) go in meeting zone (in one cycle)
-  NUM_CYCLE_OUTPUT : 100               # number of cycle
+  NUM_DAY : 10               # number of cycle
   PROBA_CONTAMINATION : 0.97           # probability to infect someone
   MAX_NEIGHBOURS : 5
-
-
+  PROBA_HEAL : 0.3
+  PROBA_DEATH : 0.3
+  TIME_WITHOUT_S : 2
+  TIME_CONTAMINATED : 7
+  TIME_TOO_MUCH : 15
 
 #  liste_dead = []
-#  proba_guerison = 0.3
 #  proba_meet = 0.5
-#  proba_mort = 0.05
 #  malus_conta = 8  # Malus si personne conta divise la proba de meeting
-#  time_without_s = 5
-#  time_contaminated = 14
-#  time_too_much =  40  # Si on est contaminé pdt trop lgt on risque de mourir (personne intubé)
 #  stats = {"healthful": [nombre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}

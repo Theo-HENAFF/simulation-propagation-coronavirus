@@ -15,10 +15,11 @@ def decision(probability):
 
 
 class Person(object):
-    def __init__(self, idd, health_status="healthful", liste_neighbour=[]):
+    def __init__(self, idd, contagious_time=0, health_status="healthful", liste_neighbour=[]):
         self.idd = idd
         self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
         self.liste_neighbour = liste_neighbour
+        self.contagious_time = contagious_time
 
     def infection(self, id_neighbour, proba_contamination):
         # f.write("{} va voir {} \n".format(person.id_person, id_neighbour))
@@ -28,11 +29,14 @@ class Person(object):
                 liste_pers[id_neighbour].health_status == "healthful":
             if decision(proba_contamination):
                 # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
+                print("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
                 liste_pers[id_neighbour].health_status = "cont_without_s"
+
         elif (liste_pers[id_neighbour].health_status == "cont_without_s" or liste_pers[
             id_neighbour].health_status == "contaminated") and self.health_status == "healthful":
             if decision(proba_contamination):
-                # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(person.id_person))
+                # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(person.idd))
+                print("TERRIBLE {} get coroned \n".format(self.idd))
                 self.health_status = "cont_without_s"
 
 
@@ -71,10 +75,37 @@ def meet(env, name, cw, idd, num_person, timemeet, proba_conta):
         print('%s exit the meeting zone %.2f.' % (name, env.now))
 
 
-def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, proba_conta):
+def gestion(proba_mort, time_contaminated, proba_guerison, time_without_s, time_too_much):
+    for person in liste_pers:
+        if person.health_status == "cont_without_s" or person.health_status == "contaminated":
+            person.contagious_time += 1
 
-    # Create the World
-    world = World(env, area_zone, meetime)
+        # A bout de X unités de temps elle commence à développer des symptômes
+        if person.contagious_time > time_without_s and person.health_status == "cont_without_s":
+            # pour simuler si la personne meurt rapidement
+            if decision(proba_mort):
+                person.health_status = "dead"
+            else:
+                person.health_status = "contaminated"
+            # f.write("MINCE {} développe des symptomes \n".format(person.idd))
+            print("MINCE {} développe des symptomes \n".format(person.idd))
+
+
+        # A bout de X temps la personne contaminée est gueri avec une proba de guerison
+        elif person.contagious_time > time_contaminated and person.health_status == "contaminated":
+            if decision(proba_guerison):
+                person.health_status = "cured"
+                # f.write("YOUPI {} a guéri \n".format(person.idd))
+                print("YOUPI {} a guéri \n".format(person.idd))
+
+        # Si apres X temps elle n'est pas guéri elle a de grande chance de mourir
+        elif person.contagious_time > time_too_much and decision(proba_mort) and person.health_status == "contaminated":
+            person.health_status = 'dead'
+            # f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
+            print("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
+
+
+def setup(nber_person, max_neighbours):
 
     for person in range(nber_person):
         # Création des voisins
@@ -90,10 +121,16 @@ def setup(env, area_zone, meetime, nber_person, capacity_area, max_neighbours, p
     id_conta = r.randint(0, nber_person)
     liste_pers[id_conta].health_status = 'cont_without_s'
     # f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
+    print('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
+
+    # start the meet between person
+
+
+def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta):
+    world = World(env, area_zone, meetime)
 
     # start the meet between person
     for i in range(capacity_area):
         rand = r.randint(0, nber_person)
         env.process(meet(env, 'Person %d' % rand, world, rand, nber_person, meetime, proba_conta))
-    yield env.timeout(r.randint(500 - 2, 500 + 2))
-
+        yield env.timeout(r.randint(500 - 2, 500 + 2))
