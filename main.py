@@ -10,7 +10,6 @@ nombre_jour = 60
 
 Xmax = 5  # Nbre max de personnes qu'un individu peut fréquenter
 proba_contamination = 0.4
-liste_dead = []
 proba_guerison = 0.3
 proba_meet = 0.5
 proba_mort = 0.05

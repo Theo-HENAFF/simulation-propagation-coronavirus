@@ -5,7 +5,8 @@ import simpy
 # listperson in your simulation
 global liste_pers
 liste_pers = []
-
+global stats
+stats = {"healthful": [], "cont_without_s": [], "contaminated": [], "cured": [], "dead": []}
 
 def decision(probability):
     if r.random() < probability:
@@ -22,7 +23,7 @@ class Person(object):
         self.contagious_time = contagious_time
 
     def infection(self, id_neighbour, proba_contamination):
-        # f.write("{} va voir {} \n".format(person.id_person, id_neighbour))
+        print("{} va voir {} \n".format(self.idd, id_neighbour))
         # Si une des personnes qui se rendnent visite est contaminée (avec ou sans symptômes)
         # il y'a une proba de contamination
         if (self.health_status == "cont_without_s" or self.health_status == "contaminated") and \
@@ -104,8 +105,38 @@ def gestion(proba_mort, time_contaminated, proba_guerison, time_without_s, time_
             # f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
             print("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
 
+def add_stats():
+    count_healthful = 0
+    count_cont_without_s = 0
+    count_contaminated = 0
+    count_cured = 0
+    count_dead = 0
+
+    for person in liste_pers:
+        if person.health_status == "healthful":
+            count_healthful += 1
+        elif person.health_status == "cont_without_s":
+            count_cont_without_s += 1
+        elif person.health_status == "contaminated":
+            count_contaminated += 1
+        elif person.health_status == "cured":
+            count_cured += 1
+        elif person.health_status == "dead":
+            count_dead += 1
+
+    stats["healthful"].append(count_healthful)
+    stats["cont_without_s"].append(count_cont_without_s)
+    stats["contaminated"].append(count_contaminated)
+    stats["cured"].append(count_cured)
+    stats["dead"].append(count_dead)
+
 
 def setup(nber_person, max_neighbours):
+    stats["healthful"].append(nber_person-1)
+    stats["cont_without_s"].append(1)
+    stats["contaminated"].append(0)
+    stats["cured"].append(0)
+    stats["dead"].append(0)
 
     for person in range(nber_person):
         # Création des voisins
@@ -123,7 +154,6 @@ def setup(nber_person, max_neighbours):
     # f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
     print('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
 
-    # start the meet between person
 
 
 def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta):
@@ -134,3 +164,5 @@ def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta):
         rand = r.randint(0, nber_person)
         env.process(meet(env, 'Person %d' % rand, world, rand, nber_person, meetime, proba_conta))
         yield env.timeout(r.randint(500 - 2, 500 + 2))
+
+    print("Nombre de personne : {}".format(len(len(liste_pers))))

@@ -65,14 +65,16 @@ if __name__ == "__main__":
                               capacity_area=CAPACITY_AREA,
                               proba_conta=proba_conta))
 
-        #Add temporality to the simulation
+        # Add temporality to the simulation
         utils.gestion(proba_mort=PROBA_DEATH,
                       time_contaminated=TIME_CONTAMINATED,
                       proba_guerison=PROBA_HEAL,
                       time_without_s=TIME_WITHOUT_S,
                       time_too_much=TIME_TOO_MUCH)
 
-    # Execute!
+        utils.add_stats()
+        # Execute!
         env.run(until=SIM_TIME)
 
         print("====================== end day {} ======================".format(day))
+    print("STATS : ", utils.stats)

@@ -1,13 +1,13 @@
 config:
   RANDOM_SEED : 1111
-  NUM_AREA : 2                         # number of meeting zone (2 persons can be enter is this zone)
+  NUM_AREA : 100                         # number of meeting zone (2 persons can be enter is this zone)
   TIMEMEET : 5                        # minutes staying in the meeting zone
   SIM_TIME : 200                     # Simulation time in minutes (in on cycle)
   NUM_PERSON : 100                   # number of person in the simulation
-  CAPACITY_AREA : 15                 # number of object (person) go in meeting zone (in one cycle)
+  CAPACITY_AREA : 100                 # number of object (person) go in meeting zone (in one cycle)
   NUM_DAY : 10               # number of cycle
   PROBA_CONTAMINATION : 0.97           # probability to infect someone
-  MAX_NEIGHBOURS : 5
+  MAX_NEIGHBOURS : 20
   PROBA_HEAL : 0.3
   PROBA_DEATH : 0.3
   TIME_WITHOUT_S : 2
