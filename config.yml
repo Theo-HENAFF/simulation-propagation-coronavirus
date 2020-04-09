@@ -1,18 +1,19 @@
 config:
-  RANDOM_SEED : 1111
-  NUM_AREA : 100                         # number of meeting zone (2 persons can be enter is this zone)
-  TIMEMEET : 5                        # minutes staying in the meeting zone
-  SIM_TIME : 200                     # Simulation time in minutes (in on cycle)
-  NUM_PERSON : 100                   # number of person in the simulation
-  CAPACITY_AREA : 100                 # number of object (person) go in meeting zone (in one cycle)
-  NUM_DAY : 10               # number of cycle
+  RANDOM_SEED : 2323
+  NUM_AREA : 10                     # number of meeting zone (2 persons can be enter is this zone)
+  TIMEMEET : 1                        # minutes staying in the meeting zone
+  NUM_PERSON : 10000                   # number of person in the simulation
+  CAPACITY_AREA : 10                 # number of object (person) go in meeting zone (in one cycle)
+  NUM_DAY : 200               # number of cycle
   PROBA_CONTAMINATION : 0.97           # probability to infect someone
-  MAX_NEIGHBOURS : 20
-  PROBA_HEAL : 0.3
-  PROBA_DEATH : 0.3
-  TIME_WITHOUT_S : 2
-  TIME_CONTAMINATED : 7
-  TIME_TOO_MUCH : 15
+  MAX_NEIGHBOURS : 10
+  MALUS : 5                      #MALUS PROBA RENCONTRE POUR MALADE AVEC SYMPTOME
+  PROBA_MEET : 0.1
+  PROBA_HEAL : 0.4
+  PROBA_DEATH : 0.05
+  TIME_WITHOUT_S : 7
+  TIME_CONTAMINATED : 14
+  TIME_TOO_MUCH : 25
 
 #  liste_dead = []
 #  proba_meet = 0.5

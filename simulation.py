@@ -16,7 +16,8 @@
 import random
 import simpy
 import yaml
-
+import matplotlib.pyplot as plt
+import numpy as np
 # simulation function
 import utils
 
@@ -36,7 +37,6 @@ if __name__ == "__main__":
     NUM_PERSON = cfg['config']['NUM_PERSON']
     NUM_DAY = cfg['config']['NUM_DAY']
     CAPACITY_AREA = cfg['config']['CAPACITY_AREA']
-    SIM_TIME = cfg['config']['SIM_TIME']
     proba_conta = cfg['config']['PROBA_CONTAMINATION']
     MAX_NEIGHBOURS = cfg['config']['MAX_NEIGHBOURS']
     PROBA_HEAL = cfg['config']["PROBA_HEAL"]
@@ -44,6 +44,9 @@ if __name__ == "__main__":
     TIME_WITHOUT_S = cfg['config']["TIME_WITHOUT_S"]
     TIME_CONTAMINATED = cfg['config']["TIME_CONTAMINATED"]
     TIME_TOO_MUCH = cfg['config']["TIME_TOO_MUCH"]
+    PROBA_MEET = cfg['config']["PROBA_MEET"]
+    MALUS = cfg['config']["MALUS"]
+
 
     # This helps reproducing the results
     random.seed(RANDOM_SEED)
@@ -63,7 +66,9 @@ if __name__ == "__main__":
                               meetime=TIMEMEET,
                               nber_person=NUM_PERSON,
                               capacity_area=CAPACITY_AREA,
-                              proba_conta=proba_conta))
+                              proba_conta=proba_conta,
+                              PROBA_MEET=PROBA_MEET,
+                              MALUS=MALUS))
 
         # Add temporality to the simulation
         utils.gestion(proba_mort=PROBA_DEATH,
@@ -74,7 +79,19 @@ if __name__ == "__main__":
 
         utils.add_stats()
         # Execute!
-        env.run(until=SIM_TIME)
+        env.run(until=NUM_PERSON * 800)
 
         print("====================== end day {} ======================".format(day))
     print("STATS : ", utils.stats)
+    stats = utils.stats
+    x = np.linspace(0, NUM_DAY, NUM_DAY+1)
+    labels = ["cont_without_s ", "contaminated", "dead", "cured"]
+    pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60"]
+
+    fig, ax = plt.subplots()
+    ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"],
+                 colors=pal, alpha=0.8, labels=labels)
+    ax.legend(loc='upper left')
+    plt.hlines(NUM_PERSON, 0, NUM_DAY)
+    plt.show()
+

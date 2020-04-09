@@ -170,7 +170,9 @@ def vie(env, liste_pers, nbre_jour):
             # Partie gestion de temporalité. Chaque personne à un compteur de temps de contamination.
             gestion(person)
         # f.write("\n Trop bien fin de la journée {} \n".format(journee + 1))
-        add_stats()
+        add_\
+
+            ()
         yield env.timeout(1)
 
 
