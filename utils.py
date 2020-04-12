@@ -1,13 +1,13 @@
-# library used
 import random as r
 import simpy
 
-# listperson in your simulation
-global liste_pers
-liste_pers = []
-global stats
+# list_person and stats are core element for the simulation
+global list_pers, stats
+list_pers = []
 stats = {"healthful": [], "cont_without_s": [], "contaminated": [], "cured": [], "dead": []}
 
+
+# Simple function returning True or False when you input a number between 0 and 1
 def decision(probability):
     if r.random() < probability:
         return True
@@ -16,98 +16,82 @@ def decision(probability):
 
 
 class Person(object):
-    def __init__(self, idd, contagious_time=0, health_status="healthful", liste_neighbour=[]):
-        self.idd = idd
-        self.health_status = health_status  # healthful/cont_without_s/contaminated/dead
-        self.liste_neighbour = liste_neighbour
+    def __init__(self, idd, contagious_time=0, health_status="healthful", list_neighbour=[]):
+        self.idd = idd  # The idd is also the index in list_person
+        
+        # there is 4 health_status healthful/cont_without_s/contaminated/dead
+        self.health_status = health_status
+
+        # list_neighbour contain the index of the persons this person can meet
+        self.list_neighbour = list_neighbour
+
+        # number of day the person has been contaminated
         self.contagious_time = contagious_time
 
+    # If one of the people meeting is infected (with or without symptoms)
+    # there is a proba of contamination
     def infection(self, id_neighbour, proba_contamination):
-        #print("{} va voir {} \n".format(self.idd, id_neighbour))
-        # Si une des personnes qui se rendnent visite est contaminée (avec ou sans symptômes)
-        # il y'a une proba de contamination
-        if (self.health_status == "cont_without_s" or self.health_status == "contaminated") and \
-                liste_pers[id_neighbour].health_status == "healthful":
-            if decision(proba_contamination):
-                # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
-                #print("TERRRRRRIIIIBLE {} get coroned \n".format(id_neighbour))
-                liste_pers[id_neighbour].health_status = "cont_without_s"
 
-        elif (liste_pers[id_neighbour].health_status == "cont_without_s" or liste_pers[
-            id_neighbour].health_status == "contaminated") and self.health_status == "healthful":
+        if (self.health_status == "cont_without_s" or self.health_status == "contaminated") and \
+                list_pers[id_neighbour].health_status == "healthful":
             if decision(proba_contamination):
-                # f.write("TERRRRRRIIIIBLE {} get coroned \n".format(person.idd))
-                #print("TERRIBLE {} get coroned \n".format(self.idd))
+                list_pers[id_neighbour].health_status = "cont_without_s"
+
+        elif (list_pers[id_neighbour].health_status == "cont_without_s" or list_pers[
+                id_neighbour].health_status == "contaminated") and self.health_status == "healthful":
+            if decision(proba_contamination):
                 self.health_status = "cont_without_s"
 
 
 class World(object):
-    """
-    this is your world (simulation)
-    """
+
     def __init__(self, env, area_zone, meetime):
         self.env = env
         self.meet = simpy.Resource(env, area_zone)
         self.meetime = meetime
 
+    # The zone where 2 people meet
     def area(self, idd, num_person, timemeet, proba_conta):
-        """
-        propagation's area
-        in this area , one person can meet an other person
-        """
+        # We randomly choose an id of the list_neighbour of the person
+        id_neighbour = list_pers[idd].list_neighbour[r.randint(0, len(list_pers[idd].list_neighbour) - 1)]
 
-
-        id_neighbour = liste_pers[idd].liste_neighbour[r.randint(0, len(liste_pers[idd].liste_neighbour) - 1 )]
-
-        ##print("Person {} : Enter the meeting zone {}".format(id_neighbour, self.env.now))
-        liste_pers[idd].infection(id_neighbour, proba_conta)
+        list_pers[idd].infection(id_neighbour, proba_conta)
         yield self.env.timeout(timemeet)
-        #print("Person {} : Enter the meeting zone {}".format(id_neighbour, self.env.now))
 
 
-def meet(env, name, cw, idd, num_person, timemeet, proba_conta):
-    """
-    create meet between person (in the area)
-    """
-    #print("{} : wait in order to leave house at {}".format(name, env.now))
+# The meeting
+def meet(env, cw, idd, num_person, timemeet, proba_conta):
     with cw.meet.request() as request:
         yield request
-        # meeting zone
-        #print("{} : Enter in the meeting zone {}".format(name, env.now))
+        # Insert one person in the meeting zone
         yield env.process(cw.area(idd, num_person, timemeet, proba_conta))
-        # exit the meeting
-        #print('%s exit the meeting zone %.2f.' % (name, env.now))
 
 
-def gestion(proba_mort, time_contaminated, proba_guerison, time_without_s, time_too_much):
-    for person in liste_pers:
+# Management of the health_status
+def gestion(proba_death, time_contaminated, proba_heal, time_without_s, time_too_much, proba_death_during_rea):
+    for person in list_pers:
+        # for each person sick we had a day of contamination
         if person.health_status == "cont_without_s" or person.health_status == "contaminated":
             person.contagious_time += 1
 
-        # A bout de X unités de temps elle commence à développer des symptômes
+        # After X units of time the person begins to develop symptoms.
         if person.contagious_time > time_without_s and person.health_status == "cont_without_s":
-            # pour simuler si la personne meurt rapidement
-            if decision(proba_mort):
+            # Everybody has a chance to die very fast (diabetes, obesity, elders ...)
+            if decision(proba_death):
                 person.health_status = "dead"
             else:
                 person.health_status = "contaminated"
-            # f.write("MINCE {} développe des symptomes \n".format(person.idd))
-            #print("MINCE {} développe des symptomes \n".format(person.idd))
 
-
-        # A bout de X temps la personne contaminée est gueri avec une proba de guerison
+        # At the end of X time the infected person has a chance to be healed with a proba_heal each day
         elif person.contagious_time > time_contaminated and person.health_status == "contaminated":
-            if decision(proba_guerison):
+            if decision(proba_heal):
                 person.health_status = "cured"
-                # f.write("YOUPI {} a guéri \n".format(person.idd))
-                #print("YOUPI {} a guéri \n".format(person.idd))
 
-        # Si apres X temps elle n'est pas guéri elle a de grande chance de mourir
-        elif person.contagious_time > time_too_much and decision(proba_mort) and person.health_status == "contaminated":
+        # If she's not cured in time, she has a good chance of dying.
+        elif person.contagious_time > time_too_much and decision(proba_death_during_rea) and person.health_status == "contaminated":
             person.health_status = 'dead'
-            # f.write("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
-            #print("DOMMAGE {} à manger le pissenlit par la racine \n".format(person.idd))
 
+# Each day we will count the number of people with each health_status to see the evolution
 def add_stats():
     count_healthful = 0
     count_cont_without_s = 0
@@ -115,7 +99,7 @@ def add_stats():
     count_cured = 0
     count_dead = 0
 
-    for person in liste_pers:
+    for person in list_pers:
         if person.health_status == "healthful":
             count_healthful += 1
         elif person.health_status == "cont_without_s":
@@ -133,7 +117,7 @@ def add_stats():
     stats["cured"].append(count_cured)
     stats["dead"].append(count_dead)
 
-
+# Setup the simualtion by mainly adding nber_person to list_pers
 def setup(nber_person, max_neighbours):
     stats["healthful"].append(nber_person-1)
     stats["cont_without_s"].append(1)
@@ -142,44 +126,38 @@ def setup(nber_person, max_neighbours):
     stats["dead"].append(0)
 
     for person in range(nber_person):
-        # Création des voisins
-        nbre_neighbours = r.randint(0, max_neighbours)  # Nbre aléatoire de voisins jusqu'à max_neighbours
-        liste_neighbour = []
+        # Creating the list_neighbour
+        nbre_neighbours = r.randint(0, max_neighbours)  # Random number of neighbours up to max_neighbours
+        list_neighbour = []
         for voisin in range(0, nbre_neighbours):
             n = r.randint(0, nber_person - 1)
-            liste_neighbour.append(n)
-        # Déclaration des personnes
-        liste_pers.append(Person(idd=person, liste_neighbour=liste_neighbour))
+            list_neighbour.append(n)
+        # Declaration of Persons
+        list_pers.append(Person(idd=person, list_neighbour=list_neighbour))
 
-    # random conta 1 pers
+    # random contamination of 1 person
     id_conta = r.randint(0, nber_person)
-    liste_pers[id_conta].health_status = 'cont_without_s'
-    # f.write('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
-    #print('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
+    list_pers[id_conta].health_status = 'cont_without_s'
+    print('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
 
 
-
-def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta,PROBA_MEET,MALUS):
+def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta, proba_meet, malus):
     world = World(env, area_zone, meetime)
 
-    # start the meet between person
-    for i in range(len(liste_pers)):
-        # rand = r.randint(0, nber_person-1)
-        if len(liste_pers[i].liste_neighbour) == 0 :
+    # start the meet between person, each person meet a random neighbour
+    for i in range(len(list_pers)):
+        if len(list_pers[i].list_neighbour) == 0:
             pass
-        else :
-            if liste_pers[i].health_status != "contaminated" and liste_pers[i].health_status != "dead":
-                if decision(PROBA_MEET):
-                    env.process(meet(env, 'Person %d' % i, world, i, nber_person, meetime, proba_conta))
-                    #print("DEBUT MEETING {}".format(i))
-                    yield env.timeout(r.randint(500 - 2 , 500 + 2) )
-                    #print("FIN MEETING {}".format(i))
-            elif liste_pers[i].health_status == "contaminated":
-                if decision(PROBA_MEET/MALUS):
-                    env.process(meet(env, 'Person %d' % i, world, i, nber_person, meetime, proba_conta))
-                    #print("DEBUT MEETING {}".format(i))
-                    yield env.timeout(r.randint(500 - 2 , 500 + 2) )
-                    #print("FIN MEETING {}".format(i))
+        else:
+            if list_pers[i].health_status != "contaminated" and list_pers[i].health_status != "dead":
+                if decision(proba_meet):
+                    env.process(meet(env, world, i, nber_person, meetime, proba_conta))
+                    yield env.timeout(r.randint(500 - 2, 500 + 2))
+            # If the person has symptom, it is more difficult to meet somebody
+            elif list_pers[i].health_status == "contaminated":
+                if decision(proba_meet/malus):
+                    env.process(meet(env, world, i, nber_person, meetime, proba_conta))
+                    yield env.timeout(r.randint(500 - 2, 500 + 2))
 
 
 

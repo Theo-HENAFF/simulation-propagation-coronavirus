@@ -1,21 +1,20 @@
 config:
   RANDOM_SEED : 2323
-  NUM_AREA : 10                     # number of meeting zone (2 persons can be enter is this zone)
-  TIMEMEET : 1                        # minutes staying in the meeting zone
-  NUM_PERSON : 10000                   # number of person in the simulation
-  CAPACITY_AREA : 10                 # number of object (person) go in meeting zone (in one cycle)
-  NUM_DAY : 200               # number of cycle
-  PROBA_CONTAMINATION : 0.97           # probability to infect someone
-  MAX_NEIGHBOURS : 10
-  MALUS : 5                      #MALUS PROBA RENCONTRE POUR MALADE AVEC SYMPTOME
-  PROBA_MEET : 0.1
-  PROBA_HEAL : 0.4
-  PROBA_DEATH : 0.05
-  TIME_WITHOUT_S : 7
-  TIME_CONTAMINATED : 14
-  TIME_TOO_MUCH : 25
 
-#  liste_dead = []
-#  proba_meet = 0.5
-#  malus_conta = 8  # Malus si personne conta divise la proba de meeting
-#  stats = {"healthful": [nombre_pers-1], "cont_without_s": [1], "contaminated": [0], "cured": [0], "dead": [0]}
+  NUM_PERSON: 1000              # number of person in the simulation
+  NUM_DAY : 200                   # number of day to simulate
+
+  PROBA_MEET: 0.1                 # Probability to meet  someone
+  PROBA_CONTAMINATION : 0.97      # Probability to infect someone when you meet
+  MAX_NEIGHBOURS : 10             # Maximum of people you can meet ('cause you don't know everybody in the world)
+  TIME_WITHOUT_S: 7               # After this time they get symptom or die instantly (die without reanimation stage)
+  PROBA_DEATH : 0.05              # Probabilty to die while declaring symptom without going to intensive care
+  MALUS: 5                        # Malus of meeting people if you are contaminated (with symptom)
+  TIME_CONTAMINATED : 14          # After this time they have a chance to heal every day (PROBA_HEAL)
+  PROBA_HEAL: 0.25                # Probability to heal every day
+  TIME_TOO_MUCH : 25              # After such a long time being sick we assume that they have a chance to die every day
+  PROBA_DEATH_DURING_REA : 0.4
+
+  NUM_AREA: 10                     # number of meeting zone (2 persons can be enter is this zone)
+  TIMEMEET: 1                      # minutes staying in the meeting zone (it doesn't infer with probability to infect)
+  CAPACITY_AREA: 10                # number of object (person) go in meeting zone (in one cycle)
