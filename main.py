@@ -2,14 +2,14 @@ import simpy
 import yaml
 import matplotlib.pyplot as plt
 import numpy as np
-import utils
+import features
 
 
 # main of the simulation
 if __name__ == "__main__":
 
     # Load the config file
-    with open("config.yml", "r") as ymlfile:
+    with open("configuration.yml", "r") as ymlfile:
         cfg = yaml.load(ymlfile)
 
     # define simulation's values
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 # Simulation
 # =================================================================================
     # Setup the simulation
-    utils.setup(nber_person=NUM_PERSON, max_neighbours=MAX_NEIGHBOURS)
+    features.setup(nber_person=NUM_PERSON, max_neighbours=MAX_NEIGHBOURS)
 
     # Run the simulation
     for day in range(NUM_DAY):
@@ -43,34 +43,38 @@ if __name__ == "__main__":
         env = simpy.Environment()
 
         # Setup and start the simulation
-        env.process(utils.day(env=env,
-                              area_zone=NUM_AREA,
-                              meetime=TIMEMEET,
-                              nber_person=NUM_PERSON,
-                              capacity_area=CAPACITY_AREA,
-                              proba_conta=proba_conta,
-                              proba_meet=PROBA_MEET,
-                              malus=MALUS))
+        env.process(features.day(env=env,
+                                 area_zone=NUM_AREA,
+                                 meetime=TIMEMEET,
+                                 nber_person=NUM_PERSON,
+                                 capacity_area=CAPACITY_AREA,
+                                 proba_conta=proba_conta,
+                                 proba_meet=PROBA_MEET,
+                                 malus=MALUS))
 
         # Add temporality to the simulation
-        utils.gestion(proba_death=PROBA_DEATH,
-                      time_contaminated=TIME_CONTAMINATED,
-                      proba_heal=PROBA_HEAL,
-                      time_without_s=TIME_WITHOUT_S,
-                      time_too_much=TIME_TOO_MUCH,
-                      proba_death_during_rea=PROBA_DEATH_DURING_REA)
+        features.gestion(proba_death=PROBA_DEATH,
+                         time_contaminated=TIME_CONTAMINATED,
+                         proba_heal=PROBA_HEAL,
+                         time_without_s=TIME_WITHOUT_S,
+                         time_too_much=TIME_TOO_MUCH,
+                         proba_death_during_rea=PROBA_DEATH_DURING_REA)
         # Get stats for the visualization
-        utils.add_stats()
+        features.add_stats()
+
+
         # Execute
         env.run(until=NUM_PERSON * 800)
-
         print("END OF DAY {} OUT OF {}".format(day, NUM_DAY))
+        features.log.write("END OF DAY {} OUT OF {} \n".format(day, NUM_DAY))
+
+
 
 
 # =================================================================================
 # Visualization
 # =================================================================================
-    stats = utils.stats
+    stats = features.stats
     x = np.linspace(0, NUM_DAY, NUM_DAY+1)
     labels = ["cont_without_s ", "contaminated", "dead", "cured"]
     pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60"]
@@ -79,5 +83,18 @@ if __name__ == "__main__":
     ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"],
                  colors=pal, alpha=0.8, labels=labels)
     ax.legend(loc='upper left')
+    plt.suptitle('Propagation of the virus through time')
+    plt.xlabel("Days")
+    plt.ylabel('Number of persons')
     plt.hlines(NUM_PERSON, 0, NUM_DAY)
-    plt.show()
+    plt.savefig('results')
+
+    #Print stats in the log file
+    features.log.write("Total: {} \n".format(NUM_PERSON))
+    features.log.write("contaminated without symptoms: {} \n".format(str(stats["cont_without_s"])))
+    features.log.write("contaminated: {} \n".format(str(stats["contaminated"])))
+    features.log.write("Dead: {} \n".format(str(stats["dead"])))
+    features.log.write("cured: {} \n".format(str(stats["cured"])))
+
+    #End of simulation we close the file
+    features.log.close()

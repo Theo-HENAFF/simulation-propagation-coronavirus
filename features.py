@@ -1,11 +1,16 @@
 import random as r
 import simpy
+import main
+
+
+
 
 # list_person and stats are core elements for the simulation
 global list_pers, stats
 list_pers = []
 stats = {"healthful": [], "cont_without_s": [], "contaminated": [], "cured": [], "dead": []}
-
+# Load the log file
+log = open("logs.txt", "w")
 
 # Simple function returning True or False when you input a number between 0 and 1
 def decision(probability):
@@ -36,11 +41,13 @@ class Person(object):
                 list_pers[id_neighbour].health_status == "healthful":
             if decision(proba_contamination):
                 list_pers[id_neighbour].health_status = "cont_without_s"
+                log.write("Person {} has been contaminated by {} \n".format(list_pers[id_neighbour].idd, self.idd))
 
         elif (list_pers[id_neighbour].health_status == "cont_without_s" or list_pers[
                 id_neighbour].health_status == "contaminated") and self.health_status == "healthful":
             if decision(proba_contamination):
                 self.health_status = "cont_without_s"
+                log.write("Person {} has been contaminated by {} \n".format(self.idd, list_pers[id_neighbour].idd))
 
 
 class World(object):
@@ -66,11 +73,10 @@ def meet(env, cw, idd, num_person, timemeet, proba_conta):
         # Insert one person in the meeting zone
         yield env.process(cw.area(idd, num_person, timemeet, proba_conta))
 
-
 # Management of the health_status
 def gestion(proba_death, time_contaminated, proba_heal, time_without_s, time_too_much, proba_death_during_rea):
     for person in list_pers:
-        # for each person sick we had a day of contamination
+        # for each person sick we add a day of contamination
         if person.health_status == "cont_without_s" or person.health_status == "contaminated":
             person.contagious_time += 1
 
@@ -79,17 +85,21 @@ def gestion(proba_death, time_contaminated, proba_heal, time_without_s, time_too
             # Everybody has a chance to die very fast (diabetes, obesity, elders ...)
             if decision(proba_death):
                 person.health_status = "dead"
+                log.write("Person {} is dead. \n".format(person.idd))
             else:
                 person.health_status = "contaminated"
+                log.write("Symptoms appeared for person {} \n".format(person.idd))
 
         # At the end of X time the infected person has a chance to be healed with a proba_heal each day
         elif person.contagious_time > time_contaminated and person.health_status == "contaminated":
             if decision(proba_heal):
                 person.health_status = "cured"
+                log.write("Person {} is now cured. \n".format(person.idd))
 
         # If she's not cured in time, she has a good chance of dying.
         elif person.contagious_time > time_too_much and decision(proba_death_during_rea) and person.health_status == "contaminated":
             person.health_status = 'dead'
+            log.write("Person {} is dead. \n".format(person.idd))
 
 # Each day we will count the number of people with each health_status to see the evolution
 def add_stats():
@@ -139,12 +149,16 @@ def setup(nber_person, max_neighbours):
     id_conta = r.randint(0, nber_person)
     list_pers[id_conta].health_status = 'cont_without_s'
     print('la personne {} doit arreter de manger de la soupe de chauve souris \n'.format(id_conta))
+    log.write("Person {} is patient zero  \n".format(id_conta))
 
 
 def day(env, area_zone, meetime, nber_person, capacity_area, proba_conta, proba_meet, malus):
     world = World(env, area_zone, meetime)
 
-    # start the meet between person, each person meet a random neighbour
+
+
+
+# start the meet between person, each person meet a random neighbour
     for i in range(len(list_pers)):
         if len(list_pers[i].list_neighbour) == 0:
             pass
