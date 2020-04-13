@@ -1,7 +1,7 @@
 import random as r
 import simpy
 
-# list_person and stats are core element for the simulation
+# list_person and stats are core elements for the simulation
 global list_pers, stats
 list_pers = []
 stats = {"healthful": [], "cont_without_s": [], "contaminated": [], "cured": [], "dead": []}

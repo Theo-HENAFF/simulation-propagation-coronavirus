@@ -1,25 +1,33 @@
-# simulation-propagation-coronavirus
-Init ok \
-Cycle de vie de chaque personne à faire (dans fonction vie())
+# Simulation propagation of a virus :
 
-Cycle de vie : \
-Une personne voit avec une probabilité forte son entrourage (ses voisins, ses collègues de travail) \
+## How to use : 
 
-Elle peut voir une personne de façon aléatoire(proba faible) qui n'est pas de son entourage (aux courses par exemple)
+### Required packages :
 
-Chaque rencontre elle a une probabilité : forte si la personne est saine ou malade sans symptome, faible si on sait que la personne est malade\
+- Simpy
+- Matplotib.pyplot
+- Numpy
 
-La probabilité de contamination est fixe car c'est la probabilité de rencontre qui est variable\
-La probabilité de contagion est fixé à 25%.
+Python version : 3.7
 
-Première simulation : \
-Chaque noeud va voir son voisin avec une probabilité de contamination.
-Une contamination a lieu si la personne ou son voisin est porteur.
-Les noeuds n'effectuent qu'une seule ronde.
-A faire : implémenter une condition d'arret.
+### Configure simulation elements :
 
-A faire : 
-- Implémenter système de vaccin
-- Améliorer la temporalité ( env.timeout)
-- Ficher de config
-- Tester confinement ( double vie avec proba meet diff)
+Use config.yml file to configure the simulation
+
+### Run simulation :
+
+Run simulation.py file to start the simulation
+
+## About the simulation :
+
+This simulation uses Simpy to create an discrete-event simulation. 
+Feel free to change the config file to observe how it evolves.
+
+### Improvements :
+
+- Add vaccines system.
+- Simulate different scenarios : Containment - Uncontainment..
+
+   
+
+
