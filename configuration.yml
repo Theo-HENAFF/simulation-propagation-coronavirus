@@ -1,6 +1,6 @@
 config:
   NUM_PERSON: 100000              # number of person in the simulation
-  NUM_DAY : 100                   # number of day to simulate
+  NUM_DAY : 200                   # number of day to simulate
   PROBA_MEET: 0.1                 # Probability to meet  someone
   PROBA_CONTAMINATION : 0.97      # Probability to infect someone when you meet
   MAX_NEIGHBOURS : 10             # Maximum of people you can meet ('beccause you don't know everybody in the world)
