@@ -10,7 +10,7 @@ config:
   TIME_CONTAMINATED : 14          # After this time they have a chance to heal every day (PROBA_HEAL)
   PROBA_HEAL: 0.25                # Probability to heal every day
   TIME_TOO_MUCH : 25              # After such a long time being sick we assume that they have a chance to die every day
-  PROBA_DEATH_DURING_REA : 0.4
+  PROBA_DEATH_DURING_REA : 0.4    # Probability of death during the reanimation
 
   NUM_AREA: 10                     # number of meeting zone (2 persons can be enter is this zone)
   TIMEMEET: 1                      # minutes staying in the meeting zone (it doesn't infer with probability to infect)
