@@ -90,11 +90,11 @@ if __name__ == "__main__":
 
     plt.plot(x, stats["rate"])
     plt.title("Rate of current infected and dead person")
-    plt.savefig("Rate of current infected and dead person")
+    plt.savefig("Rate_of_current_infected_and_dead_person")
 
     plt.plot(x, Nb_new_cont)
     plt.title("Number of new infected person per day")
-    plt.savefig("Number of new infected person per day")
+    plt.savefig("Number_of_new_infected_person_per_day")
 
     fig, ax = plt.subplots()
     ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], stats["vaccinated"],
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     plt.xlabel("Days")
     plt.ylabel('Number of persons')
     plt.hlines(NUM_PERSON, 0, NUM_DAY)
-    plt.savefig('Propagation of the virus through time')
+    plt.savefig("Propagation_of_the_virus_through_time")
 
     # Print stats in the log file
     features.log.write("Total: {} \n".format(NUM_PERSON))
