@@ -39,12 +39,14 @@ where persons meet and can infect each other, the number of neighbours is also d
 To progress in infection stages we use counters that increments each day.
 If a person shows symptoms the probability of meeting gets a malus. 
 At the end of the simulation stats are printed.
-     
+
+The simulation also includes a vaccine system. The vaccination appears in the day 50 (time to discover the vaccine).
+The number of vaccine per day is limited (not all the population can get access to the vaccine).
+The vaccine takes time to operate (10 days), during this period the person still can contract the disease.     
 
 Feel free to change the config file to observe how it evolves :).
 ### Improvements :
 
-- Add vaccines system.
 - Simulate different scenarios : Containment - Uncontainment..
 
    
