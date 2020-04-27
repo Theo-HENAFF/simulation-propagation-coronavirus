@@ -1,16 +1,22 @@
 config:
-  NUM_PERSON: 100000              # number of person in the simulation
-  NUM_DAY : 200                   # number of day to simulate
+  NUM_PERSON: 1000000              # number of person in the simulation
+  NUM_DAY: 200                   # number of day to simulate
   PROBA_MEET: 0.1                 # Probability to meet  someone
-  PROBA_CONTAMINATION : 0.97      # Probability to infect someone when you meet
-  MAX_NEIGHBOURS : 10             # Maximum of people you can meet ('beccause you don't know everybody in the world)
-  TIME_WITHOUT_S: 7               # After this time they get symptom or die instantly (die without reanimation stage)
-  PROBA_DEATH : 0.05              # Probability to die while declaring symptom without going to intensive care
-  MALUS: 5                        # Malus of meeting people if you are contaminated (with symptom)
-  TIME_CONTAMINATED : 14          # After this time they have a chance to heal every day (PROBA_HEAL)
-  PROBA_HEAL: 0.25                # Probability to heal every day
-  TIME_TOO_MUCH : 25              # After such a long time being sick we assume that they have a chance to die every day
-  PROBA_DEATH_DURING_REA : 0.4    # Probability of death during the reanimation
+  PROBA_CONTAMINATION: 0.97      # Probability to infect someone when you meet
+  MAX_NEIGHBOURS: 10             # Maximum of people you can meet ('beccause you don't know everybody in the world)
+
+  TIME_WITHOUT_S: 7              # After this time they get symptom or die instantly (die without reanimation stage)
+  PROBA_DEATH: 0.05              # Probability to die while declaring symptom without going to intensive care
+  MALUS: 5                       # Malus of meeting people if you are contaminated (with symptom)
+  TIME_CONTAMINATED: 14          # After this time they have a chance to heal every day (PROBA_HEAL)
+  PROBA_HEAL: 0.25               # Probability to heal every day
+  TIME_TOO_MUCH: 25              # After such a long time being sick we assume that they have a chance to die every day
+  PROBA_DEATH_DURING_REA: 0.4    # Probability of death during the reanimation
+
+  TIME_VACCINE_DISCOVER: 50      # Time of apparition of the vaccine
+  NUM_VACC_PER_DAY: 150          # Number of vaccine per day
+  VACCINE_EFFECT: 10              # Time for the vaccine to be efficient
+
 
   NUM_AREA: 10                     # number of meeting zone (2 persons can be enter is this zone)
   TIMEMEET: 1                      # minutes staying in the meeting zone (it doesn't infer with probability to infect)
