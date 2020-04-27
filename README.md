@@ -25,11 +25,11 @@ All logs are printed in the logs.txt file.
 
 Results are printed in the results.png file
 
-![Image](Propagation of the virus through time.png)
+![Propagation of the virus through time.png](Propagation of the virus through time.png)
 
 ## About the simulation :
 
-This simulation uses Simpy to create an discrete-event simulation. 
+This simulation uses Simpy to create an discrete-event simulation. Simpy is a discrete-event simulation library of python.
 In this simulation each infected goes through different states: 
 Contaminated without symptoms, Contaminated with symptoms, Cured and Dead.
 Each event has a probability to occur, these probabilities are determined
