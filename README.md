@@ -23,7 +23,7 @@ python main.py
 ```
 All logs are printed in the logs.txt file.
 
-Results are printed in the results.png file
+3 graphics are generated: Propagation of the virus through time ; Number of new infected person per day ; Rate of current infected and dead person
 
 ![Image](Propagation of the virus through time.png)
 
