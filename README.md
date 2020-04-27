@@ -25,7 +25,7 @@ All logs are printed in the logs.txt file.
 
 Results are printed in the results.png file
 
-![Image](results.png)
+![Image](Propagation of the virus through time.png)
 
 ## About the simulation :
 

@@ -66,16 +66,35 @@ if __name__ == "__main__":
 
         # Execute
         env.run(until=NUM_PERSON * 800)
-        print("END OF DAY {} OUT OF {}".format(day, NUM_DAY))
+        print("END OF DAY {} OUT OF {}".format(day+1, NUM_DAY))
         features.log.write("END OF DAY {} OUT OF {} \n".format(day, NUM_DAY))
 
     # =================================================================================
     # Visualization
     # =================================================================================
+
+    # Nb_new_cont[1:] = [Nb_new_cont[i]-Nb_new_cont[i-1] for i in range(1, len(Nb_new_cont))]
+    # Nb_new_cont = [i if i > 0 else 0 for i in Nb_new_cont]
+    # Nb_new_cont.insert(0, 0)
+
     stats = features.stats
+    stats["rate"].insert(0, 0)
+    stats["rate"] = [i/NUM_PERSON for i in stats["rate"]]
+    Nb_new_cont = stats["cont_without_s"]
+    Nb_new_cont[1:] = [Nb_new_cont[i]-Nb_new_cont[i-1] for i in range(1, len(Nb_new_cont))]
+    Nb_new_cont = [i if i > 0 else 0 for i in Nb_new_cont]
+
     x = np.linspace(0, NUM_DAY, NUM_DAY + 1)
     labels = ["cont_without_s ", "contaminated", "dead", "cured", "vaccinated"]
     pal = ["#f1c40f", "#e67e22", "#e74c3c", "#27ae60", "#47e9ff"]
+
+    plt.plot(x, stats["rate"])
+    plt.title("Rate of current infected and dead person")
+    plt.savefig("Rate of current infected and dead person")
+
+    plt.plot(x, Nb_new_cont)
+    plt.title("Number of new infected person per day")
+    plt.savefig("Number of new infected person per day")
 
     fig, ax = plt.subplots()
     ax.stackplot(x, stats["cont_without_s"], stats["contaminated"], stats["dead"], stats["cured"], stats["vaccinated"],
@@ -85,7 +104,7 @@ if __name__ == "__main__":
     plt.xlabel("Days")
     plt.ylabel('Number of persons')
     plt.hlines(NUM_PERSON, 0, NUM_DAY)
-    plt.savefig('results')
+    plt.savefig('Propagation of the virus through time')
 
     # Print stats in the log file
     features.log.write("Total: {} \n".format(NUM_PERSON))

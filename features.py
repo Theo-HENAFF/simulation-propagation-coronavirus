@@ -5,7 +5,14 @@ import simpy
 global list_pers, stats, day_count
 list_pers = []
 day_count = 0
-stats = {"healthful": [], "cont_without_s": [], "contaminated": [], "cured": [], "vaccinated": [], "dead": []}
+stats = {"healthful": [],
+         "cont_without_s": [],
+         "contaminated": [],
+         "cured": [],
+         "vaccinated": [],
+         "dead": [],
+         "rate": []}
+
 # Load the log file
 log = open("logs.txt", "w")
 
@@ -157,6 +164,7 @@ def add_stats():
     stats["cured"].append(count_cured)
     stats["vaccinated"].append(count_vaccinated)
     stats["dead"].append(count_dead)
+    stats["rate"].append(count_cont_without_s+count_contaminated+count_dead)
 
 
 # Setup the simualtion by mainly adding nber_person to list_pers
