@@ -25,11 +25,14 @@ All logs are printed in the logs.txt file.
 
 Results are printed in the results.png file
 
-![Propagation of the virus through time.png](Propagation of the virus through time.png)
+![Image](Propagation of the virus through time.png)
 
 ## About the simulation :
 
-This simulation uses Simpy to create an discrete-event simulation. Simpy is a discrete-event simulation library of python.
+We choose to develop this epidemic broadcast with python and more precisely the library simpy. Simpy is a discrete-event simulation library based on process. With Simpy simulations can be performed in real time or by stepping through the events (obviously our choice). 
+
+The purpose of this simulation is to model the spread of a virus in a population.
+
 In this simulation each infected goes through different states: 
 Contaminated without symptoms, Contaminated with symptoms, Cured and Dead.
 Each event has a probability to occur, these probabilities are determined
